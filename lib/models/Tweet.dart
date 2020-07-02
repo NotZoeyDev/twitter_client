@@ -7,6 +7,7 @@ class Tweet {
     this.id,
     this.idStr,
     this.text,
+    this.fullText,
     this.source,
     this.user,
   });
@@ -15,6 +16,7 @@ class Tweet {
   double id;
   String idStr;
   String text;
+  String fullText;
   String source;
   User user;
 
@@ -23,8 +25,9 @@ class Tweet {
     id: json["id"].toDouble(),
     idStr: json["id_str"],
     text: json["text"],
+    fullText: json['full_text'],
     source: json["source"],
-    user: User.fromJson(json['user'])
+    //user: User.fromJson(json['user'])
   );
 
   Map<String, dynamic> toJson() => {

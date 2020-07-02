@@ -20,7 +20,7 @@ class TwitterAPI {
     this.tokenSecret = ""
   });
 
-  Future<http.Response> _request(String method, String url, Map<String, String> params) async {
+  Future<http.Response> _request(String method, String url, Map<String, String> params, {Map<String, String> body}) async {
     if (params == null) params = {};
 
     Uri originalUrl = Uri.parse("https://$BASE_URL$url");
@@ -45,7 +45,7 @@ class TwitterAPI {
     http.Response response;
 
     if (method == "POST") {
-      response = await http.post(finalUrl, headers: headers);
+      response = await http.post(finalUrl, headers: headers, body: body);
     } else {
       response = await http.get(finalUrl, headers: headers);
     }
@@ -70,8 +70,9 @@ class TwitterAPI {
     return Uri.https("api.twitter.com", urlWithoutQuery, paramsWithQuery);
   }
 
-  Future<http.Response> post(String url, {Map<String, String> params}) async{
-    return await _request("POST", url, params);
+  Future<http.Response> post(String url, {Map<String, String> params, Map<String, String> body}) async{
+    if (body == null) body = new Map();
+    return await _request("POST", url, params, body: body);
   }
 
   Future<http.Response> get(String url, {Map<String, String> params}) async {
