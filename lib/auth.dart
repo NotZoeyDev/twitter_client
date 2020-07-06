@@ -1,9 +1,8 @@
-/// OAuth helpers
+/// Helper class for oAuth related tasks
 /// @ZoeyLovesMiki, 2020
 
 import 'dart:math';
 import 'dart:convert';
-
 import 'package:crypto/crypto.dart';
 
 /// Allowed character bytes has described by Twitter/RFC 3986
@@ -13,6 +12,13 @@ List<int> allowedBytes = [
   0x61, 0x62, 0x63, 0x64, 0x65,0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B,0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71,0x72, 0x73, 0x74, 0x75, 0x76, 0x77,0x78, 0x79, 0x7A, // a-z
   0x2D, 0x2E, 0x5F, 0x7E // - . _ ~
 ];
+
+/// Type of keys used, Twitter for Android, Mac, etc
+enum KeyType {
+  Android,
+  Mac,
+  Other
+}
 
 class OAuthHelper {
   final String _signatureMethod = "HMAC-SHA1";
@@ -25,6 +31,8 @@ class OAuthHelper {
   String _consumerSecret;
   String _token;
   String _tokenSecret;
+
+  KeyType type;
 
   OAuthHelper({
     String consumerKey,
@@ -39,6 +47,22 @@ class OAuthHelper {
     _consumerSecret = consumerSecret;
     _token = token;
     _tokenSecret = tokenSecret;
+
+    type = _getKeyType();
+  }
+
+  /// Get the key type based off the consumerKey+consumerSecret
+  KeyType _getKeyType() {
+    const String _androidHash = "bb627dabf83c0d81eef4517f2965f3e0";
+    const String _macHash = "063c9727eaa70eda40e49f2517f5afb2";
+    
+    String toHash = "$_consumerKey+_$_consumerSecret";
+    String hash = md5.convert(utf8.encode(toHash)).toString();
+
+    if (hash == _androidHash) return KeyType.Android;
+    if (hash == _macHash) return KeyType.Mac;
+
+    return KeyType.Other;
   }
 
   /// Generates a Nonce string
