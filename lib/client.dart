@@ -60,6 +60,8 @@ class TwitterClient {
       "x_auth_username": username
     });
 
+    if (response.body == "Invalid user name or password") return null;
+
     Map<String, String> values = _responseToMap(response.body);
 
     return AccessToken.fromJson(values);
@@ -96,9 +98,7 @@ class TwitterClient {
 
     Response response = await twitter.post("/1.1/statuses/update.json", params: params);
 
-    if (response.statusCode != 200) {
-      throw "Couldn't send this tweet!";
-    }
+    if (response.statusCode != 200) return null;
 
     return new Tweet.fromJson(jsonDecode(response.body));
   }
