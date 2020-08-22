@@ -4,7 +4,7 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:device_info/device_info.dart';
-import 'package:twitter_client/auth.dart'; 
+import '../twitter.dart'; 
 
 const BASE_URL = "api.twitter.com";
 

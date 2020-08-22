@@ -1,11 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:twitter_client/api.dart';
-import 'package:twitter_client/models/AccessToken.dart';
-import 'package:twitter_client/models/Tweet.dart';
-
-import 'models/RequestToken.dart';
+import '../twitter.dart';
 
 /// Wrapper class used to simplify requests to Twitter's API
 class TwitterClient {
