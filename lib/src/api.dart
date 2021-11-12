@@ -1,17 +1,15 @@
-/// Twitter API wrapper to make simple request to Twitter's servers
-/// @ZoeyLovesMiki, 2020
-
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:device_info/device_info.dart';
-import '../twitter.dart'; 
+import 'package:twitter_client/twitter.dart'; 
 
 const BASE_URL = "api.twitter.com";
 
 /// Wrapper class to call the Twitter API doing raw requests
 class TwitterAPI {
-  String consumerKey;
-  String consumerSecret;
+  String? consumerKey;
+  String? consumerSecret;
   String token;
   String tokenSecret;
   
@@ -25,7 +23,7 @@ class TwitterAPI {
   /// Call the Twitter API with proper oauth headers and signature
   /// [method] is the HTTP method to use, GET or POST.
   /// [url] is the full path for the endpoint, /1.1/some/thing.json
-  Future<http.Response> _request(String method, String url, Map<String, String> params, {Map<String, String> body}) async {
+  Future<http.Response> _request(String method, String url, Map<String, String>? params, {Map<String, String>? body}) async {
     if (params == null) params = {};
 
     Uri originalUrl = Uri.parse("https://$BASE_URL$url");
@@ -50,7 +48,7 @@ class TwitterAPI {
     // Set the proper headers
     Map<String, String> headers = {
       "Authorization": oauthHeader,
-      "Content-Type": "application/x-www-form-urlencoded"
+      //"Content-Type": "application/x-www-form-urlencoded"
     };
 
     // Add extra heders if needed
@@ -58,6 +56,9 @@ class TwitterAPI {
 
     // Do our http request and return the response
     http.Response response;
+
+    print(finalUrl);
+    print(params);
 
     if (method == "POST") {
       response = await http.post(finalUrl, headers: headers, body: body);
@@ -69,7 +70,7 @@ class TwitterAPI {
   }
 
   /// Get extra headers
-  Future<Map<String, String>> _getExtraHeaders(KeyType keyType) async {
+  Future<Map<String, String>> _getExtraHeaders(KeyType? keyType) async {
     Map<String, String> extraHeaders = new Map();
 
     // Twitter for Android requires extra headers to make the request works using Twitter's keys
@@ -115,12 +116,12 @@ class TwitterAPI {
   // If the URL includes some query, it needs to be included in the oauth signature
   // The final URL includes the "data" as part of the query but these shouldn't be part of the oauth signature
   // This fixes the url and add the missing query info that aren't part of the base url
-  Uri _fixedURL(String url, Map<String, String> params) {
-    Map<String, String> paramsWithQuery = params;
+  Uri _fixedURL(String url, Map<String, String>? params) {
+    Map<String, String>? paramsWithQuery = params;
     String urlWithoutQuery = "";
 
     Uri.parse(url).queryParameters.forEach((key, value) {
-      paramsWithQuery.addAll({key: value});
+      paramsWithQuery!.addAll({key: value});
     });
 
     urlWithoutQuery = url.replaceAll("?${Uri.parse(url).query}", "");
@@ -129,13 +130,13 @@ class TwitterAPI {
   }
 
   /// Do a post request to [url] using the [params] and [body]
-  Future<http.Response> post(String url, {Map<String, String> params, Map<String, String> body}) async{
+  Future<http.Response> post(String url, { Map<String, String>? params, Map<String, String>? body }) async {
     if (body == null) body = new Map();
     return await _request("POST", url, params, body: body);
   }
 
   /// Do a get request to [url] using the [params] and [body]
-  Future<http.Response> get(String url, {Map<String, String> params}) async {
+  Future<http.Response> get( String url, {Map<String, String>? params }) async {
     return await _request("GET", url, params);
   }
 }

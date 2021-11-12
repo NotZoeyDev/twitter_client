@@ -1,6 +1,6 @@
 class RequestToken {
-  String oauthToken;
-  String oauthTokenSecret;
+  String? oauthToken;
+  String? oauthTokenSecret;
 
   RequestToken({
     this.oauthToken,

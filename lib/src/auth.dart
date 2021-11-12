@@ -1,8 +1,6 @@
-/// Helper class for oAuth related tasks
-/// @ZoeyLovesMiki, 2020
-
 import 'dart:math';
 import 'dart:convert';
+
 import 'package:crypto/crypto.dart';
 
 /// Allowed character bytes has described by Twitter/RFC 3986
@@ -22,21 +20,21 @@ enum KeyType {
 
 class OAuthHelper {
   final String _signatureMethod = "HMAC-SHA1";
-  final String _version = "1.0";
+  final String _version = "1.1";
 
-  String _nonce;
-  String _timestamp;
+  String? _nonce;
+  String? _timestamp;
 
-  String _consumerKey;
-  String _consumerSecret;
-  String _token;
-  String _tokenSecret;
+  String? _consumerKey;
+  String? _consumerSecret;
+  String? _token;
+  String? _tokenSecret;
 
-  KeyType type;
+  KeyType? type;
 
   OAuthHelper({
-    String consumerKey,
-    String consumerSecret,
+    String? consumerKey,
+    String? consumerSecret,
     String token = "",
     String tokenSecret = ""
   }) {
@@ -122,15 +120,15 @@ class OAuthHelper {
     }
 
     List<String> _headers = [
-      encodeHeaderString("oauth_consumer_key", _consumerKey),
-      encodeHeaderString("oauth_nonce", _nonce),
+      encodeHeaderString("oauth_consumer_key", _consumerKey!),
+      encodeHeaderString("oauth_nonce", _nonce!),
       encodeHeaderString("oauth_signature", signature),
       encodeHeaderString("oauth_signature_method", _signatureMethod),
-      encodeHeaderString("oauth_timestamp", _timestamp),
+      encodeHeaderString("oauth_timestamp", _timestamp!),
     ];
 
     if (_token != "") {
-      _headers.add(encodeHeaderString("oauth_token", _token));
+      _headers.add(encodeHeaderString("oauth_token", _token!));
     }
 
     _headers.add(encodeHeaderString("oauth_version", _version));
@@ -141,7 +139,7 @@ class OAuthHelper {
   /// Generate our oAuth signature
   String getSignature(String method, String url, Map<String, String> params) {
     // List of required oAuth paramters
-    Map <String, String> oauthParams = {
+    Map <String, String?> oauthParams = {
       "oauth_consumer_key": _consumerKey,
       "oauth_nonce": _nonce,
       "oauth_signature_method": _signatureMethod,
@@ -161,10 +159,10 @@ class OAuthHelper {
     oauthParams.addAll(params);
 
     // Encode our params
-    List<String> encodedParams = new List();
+    List<String> encodedParams = <String>[];
 
     oauthParams.forEach((key, value) { 
-      encodedParams.add("${_percentEncode(key)}=${_percentEncode(value)}");
+      encodedParams.add("${_percentEncode(key)}=${_percentEncode(value!)}");
     });
 
     // Sort the encoded params 
@@ -185,10 +183,10 @@ class OAuthHelper {
     // Create our signing keyt
     String signingKey = "";
 
-    signingKey += _percentEncode(_consumerSecret) + "&";
+    signingKey += _percentEncode(_consumerSecret!) + "&";
 
     if (_tokenSecret != "") {
-      signingKey += _percentEncode(_tokenSecret);
+      signingKey += _percentEncode(_tokenSecret!);
     }
 
     // Sign everything using Hmac with SHA1

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import '../twitter.dart';
+import 'package:twitter_client/twitter.dart';
 
 /// Wrapper class used to simplify requests to Twitter's API
 class TwitterClient {
@@ -31,6 +31,8 @@ class TwitterClient {
       "oauth_callback": "oob"
     });
 
+    print(response.body);
+
     Map<String, String> values = _responseToMap(response.body);
 
     return RequestToken.fromJson(values);
@@ -56,7 +58,8 @@ class TwitterClient {
       "x_auth_username": username
     });
 
-    if (response.body == "Invalid user name or password") return null;
+    if (response.body == "Login denied due to suspicious activity. Please check your email for further login instructions.") throw("How");
+    if (response.body == "Invalid user name or password") throw("Invalid username or password");
 
     Map<String, String> values = _responseToMap(response.body);
 
@@ -68,11 +71,24 @@ class TwitterClient {
     return "https://api.twitter.com/oauth/authenticate?oauth_token=$oauthToken";
   }
 
+  Future<String> getFollowersList() async {
+    Response response = await twitter.get("/1.1/followers/list.json", params: {
+      "screen_name": "CStar_OW",
+      "cursor": "-1"
+    });
+
+    if (response.statusCode != 200) throw("Tweet couldn't be sent.");
+
+    print("nice");
+
+    return "bruh";
+  }
+
   /// Send a Tweet to Twitter
   /// [tweet] is the content of your Tweet
   /// [reply_to] is the ID of the tweet to reply to
   /// [media_ids] is a list of IDs of images you've uploaded to Twitter
-  Future<Tweet> sendTweet(String tweet, {String replyTo, List<String> mediaIDs}) async {
+  Future<Tweet> sendTweet(String tweet, {String? replyTo, List<String>? mediaIDs}) async {
     Map<String, String> params = {
       "status": tweet
     };
@@ -94,7 +110,7 @@ class TwitterClient {
 
     Response response = await twitter.post("/1.1/statuses/update.json", params: params);
 
-    if (response.statusCode != 200) return null;
+    if (response.statusCode != 200) throw("Tweet couldn't be sent.");
 
     return new Tweet.fromJson(jsonDecode(response.body));
   }
@@ -102,7 +118,7 @@ class TwitterClient {
   /// Get home timeline
   Future<void> getHomeTimeline({
     int count = 40,
-    String sinceID
+    String? sinceID
   }) async {
     Map<String, String> params = {
       "count": "$count",
@@ -130,11 +146,10 @@ class TwitterClient {
     }
 
     print(json.decode(response.body));
-
-    
   }
 
   /// Read a conversation
+  /// [tweetID] is the tweet ID of the conversation you wanna fetch
   Future<List<Tweet>> getConversation(String tweetID) async {
     Response response = await twitter.get("/2/timeline/conversation/$tweetID.json", params: {
       "include_reply_count": "true",

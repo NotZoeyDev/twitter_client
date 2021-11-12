@@ -1,8 +1,13 @@
+export 'src/models/access_token.dart';
+export 'src/models/request_token.dart';
 
-export 'src/models/AccessToken.dart';
-export 'src/models/RequestToken.dart';
-export 'src/models/Tweet.dart';
-export 'src/models/User.dart';
+export 'src/objects/bounding_box.dart';
+export 'src/objects/coordinates.dart';
+export 'src/objects/entities.dart';
+export 'src/objects/place.dart';
+export 'src/objects/sizes.dart';
+export 'src/objects/tweet.dart';
+export 'src/objects/user.dart';
 
 export 'src/api.dart';
 export 'src/auth.dart';

@@ -1,7 +1,7 @@
 class AccessToken {
-  String token;
-  String tokenSecret;
-  String screenName;
+  String? token;
+  String? tokenSecret;
+  String? screenName;
 
   AccessToken({
     this.token,
