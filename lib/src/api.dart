@@ -1,7 +1,5 @@
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
-import 'package:device_info/device_info.dart';
+import 'package:twitter_client/src/models/device_info.dart';
 import 'package:twitter_client/twitter.dart'; 
 
 const BASE_URL = "api.twitter.com";
@@ -12,12 +10,15 @@ class TwitterAPI {
   String? consumerSecret;
   String token;
   String tokenSecret;
+
+  DeviceInfo? deviceInfo;
   
   TwitterAPI({
     this.consumerKey,
     this.consumerSecret,
     this.token = "",
-    this.tokenSecret = ""
+    this.tokenSecret = "",
+    this.deviceInfo
   });
 
   /// Call the Twitter API with proper oauth headers and signature
@@ -81,26 +82,10 @@ class TwitterAPI {
       const String internalVersionName = "7160062-r-930";
 
       // Default values used when using the keys on a non Android platform
-      String model = "Pixel 3";
-      String sdkVersion = "30";
-      String manufacturer = "Google";
-      String brand = "google";
-      String product = "blueline";
-
-      // Use the actual device information if we're using an Android phone
-      if (Platform.isAndroid) {
-        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-
-        model = androidInfo.model;
-        sdkVersion = androidInfo.version.sdkInt.toString();
-        manufacturer = androidInfo.manufacturer;
-        brand = androidInfo.brand;
-        product = androidInfo.product;
-      }
+      DeviceInfo info = this.deviceInfo ?? new DeviceInfo();
 
       extraHeaders.addAll({
-        "User-Agent": "$clientName/$versionName ($internalVersionName) $model/$sdkVersion ($manufacturer;$model;$brand;$product;0;;0)",
+        "User-Agent": "$clientName/$versionName ($internalVersionName) ${info.model}/${info.sdkVersion} (${info.manufacturer};${info.model};${info.brand};${info.product};0;;0)",
         "Accept-Language": "en_US",
         "X-Twitter-Client": clientName,
         "X-Twitter-Client-Language": "en_US",
