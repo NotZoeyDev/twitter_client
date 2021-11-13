@@ -58,9 +58,6 @@ class TwitterAPI {
     // Do our http request and return the response
     http.Response response;
 
-    print(finalUrl);
-    print(params);
-
     if (method == "POST") {
       response = await http.post(finalUrl, headers: headers, body: body);
     } else {
@@ -114,6 +111,21 @@ class TwitterAPI {
     return Uri.https("api.twitter.com", urlWithoutQuery, paramsWithQuery);
   }
 
+  /// Convert a list of (value=key&value=key) into a map
+  Map<String, String> responseToMap(String response) {
+    Map<String, String> output = new Map();
+    List<String> pairList = response.split("&");
+
+    pairList.forEach((element) { 
+      List<String> values = element.split("=");
+      output.addAll({
+        values[0]: values[1]
+      });
+    });
+
+    return output;
+  }
+
   /// Do a post request to [url] using the [params] and [body]
   Future<http.Response> post(String url, { Map<String, String>? params, Map<String, String>? body }) async {
     if (body == null) body = new Map();
@@ -121,7 +133,7 @@ class TwitterAPI {
   }
 
   /// Do a get request to [url] using the [params] and [body]
-  Future<http.Response> get( String url, {Map<String, String>? params }) async {
+  Future<http.Response> get( String url, { Map<String, String>? params }) async {
     return await _request("GET", url, params);
   }
 }
