@@ -1,76 +1,20 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:twitter_client/src/endpoints/oauth.dart';
 import 'package:twitter_client/twitter.dart';
 
 /// Wrapper class used to simplify requests to Twitter's API
 class TwitterClient {
   TwitterAPI twitter;
 
-  TwitterClient(this.twitter);
+  late OAuth oAuth;
 
-  /// Convert a list of (value=key&value=key) into a map
-  Map<String, String> _responseToMap(String response) {
-    Map<String, String> output = new Map();
-    
-    List<String> pairList = response.split("&");
-
-    pairList.forEach((element) { 
-      List<String> values = element.split("=");
-      output.addAll({
-        values[0]: values[1]
-      });
-    });
-
-    return output;
+  TwitterClient(this.twitter) {
+    this.oAuth = new OAuth(this.twitter);
   }
 
-  /// Generate an Oauth token to authorize an user
-  Future<RequestToken> getRequestToken() async {
-    Response response = await twitter.post("/oauth/request_token", params: {
-      "oauth_callback": "oob"
-    });
-
-    print(response.body);
-
-    Map<String, String> values = _responseToMap(response.body);
-
-    return RequestToken.fromJson(values);
-  }
-
-  /// Get our access token
-  Future<AccessToken> getAccessToken(String oauthToken, String oauthVerifier) async {
-    Response response = await twitter.post("/oauth/access_token", params: {
-      "oauth_token": oauthToken,
-      "oauth_verifier": oauthVerifier
-    });
-
-    Map<String, String> values = _responseToMap(response.body);
-
-    return AccessToken.fromJson(values);
-  }
-
-  /// Get our access token via xauth
-  Future<AccessToken> getAccessTokenViaXauth(String username, String password) async {
-    Response response = await twitter.post("/oauth/access_token", body: {
-      "x_auth_mode": "client_auth",
-      "x_auth_password": password,
-      "x_auth_username": username
-    });
-
-    if (response.body == "Login denied due to suspicious activity. Please check your email for further login instructions.") throw("How");
-    if (response.body == "Invalid user name or password") throw("Invalid username or password");
-
-    Map<String, String> values = _responseToMap(response.body);
-
-    return AccessToken.fromJson(values);
-  }
-
-  /// Generate the authorization URL
-  String getAuthorizationURL(String oauthToken) {
-    return "https://api.twitter.com/oauth/authenticate?oauth_token=$oauthToken";
-  }
-
+  /// Get the list of followers of someone
   Future<String> getFollowersList() async {
     Response response = await twitter.get("/1.1/followers/list.json", params: {
       "screen_name": "CStar_OW",

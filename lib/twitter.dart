@@ -1,5 +1,5 @@
-export 'src/models/access_token.dart';
-export 'src/models/request_token.dart';
+export 'src/responses/access_token.dart';
+export 'src/responses/request_token.dart';
 
 export 'src/objects/bounding_box.dart';
 export 'src/objects/coordinates.dart';
