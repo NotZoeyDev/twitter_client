@@ -58,10 +58,18 @@ class TwitterAPI {
     // Do our http request and return the response
     http.Response response;
 
-    if (method == "POST") {
-      response = await http.post(finalUrl, headers: headers, body: body);
-    } else {
-      response = await http.get(finalUrl, headers: headers);
+    switch(method) {
+      case "POST":
+        response = await http.post(finalUrl, headers: headers, body: body);
+        break;
+
+      case "DELETE":
+        response = await http.delete(finalUrl, headers: headers);
+        break;
+
+      default: 
+        response = await http.get(finalUrl, headers: headers);
+        break;
     }
 
     return response;
@@ -133,7 +141,12 @@ class TwitterAPI {
   }
 
   /// Do a get request to [url] using the [params] and [body]
-  Future<http.Response> get( String url, { Map<String, String>? params }) async {
+  Future<http.Response> get(String url, { Map<String, String>? params }) async {
     return await _request("GET", url, params);
+  }
+
+  /// Do a delete request to [url] using the [params] and [body]
+  Future<http.Response> delete(String url, { Map<String, String>? params }) async {
+    return await _request("DELETE", url, params);
   }
 }
