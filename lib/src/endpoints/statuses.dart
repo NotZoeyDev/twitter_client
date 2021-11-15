@@ -1,6 +1,6 @@
-import 'package:twitter_client/twitter.dart';
+import 'package:http/http.dart';
+import 'package:twitter_client/src/api.dart';
 
-/// Implements all endpoints related to Statuses
 class Statuses {
   final TwitterAPI twitter;
 
@@ -8,8 +8,26 @@ class Statuses {
 
   /// Returns a collection of the most recent Tweets and Retweets posted by the authenticating user and the users they follow.
   /// The home timeline is central to how most users interact with the Twitter service.
-  Future<void> homeTimeline() async {
+  /// 
+  /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-home_timeline
+  Future<void> homeTimeline({
+    int? count,
+    int? sinceID,
+    int? maxID,
+    bool? trimUser,
+    bool? excludeReplies,
+    bool? includeEntities
+  }) async {
+    Map<String, String> params = twitter.validateParams({
+      'count': count?.toString(),
+      'since_id': sinceID?.toString(),
+      'max_id': maxID?.toString(),
+      'trim_user': trimUser?.toString(),
+      'exclude_replies': excludeReplies?.toString(),
+      'include_entities': includeEntities?.toString(),
+    });
 
+    Response response = await twitter.get("/1.1/statuses/home_timeline.json", params: params);
   }
 
   /// Returns the 20 most recent mentions (Tweets containing a users's @screen_name) for the authenticating user.
