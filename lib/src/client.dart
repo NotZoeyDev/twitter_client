@@ -1,114 +1,78 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
+import 'package:twitter_client/src/api.dart';
+import 'package:twitter_client/src/endpoints/account.dart';
+import 'package:twitter_client/src/endpoints/blocks.dart';
+import 'package:twitter_client/src/endpoints/collections.dart';
+import 'package:twitter_client/src/endpoints/custom_profiles.dart';
+import 'package:twitter_client/src/endpoints/direct_messages.dart';
+import 'package:twitter_client/src/endpoints/favorites.dart';
+import 'package:twitter_client/src/endpoints/feedback.dart';
+import 'package:twitter_client/src/endpoints/followers.dart';
+import 'package:twitter_client/src/endpoints/friends.dart';
+import 'package:twitter_client/src/endpoints/friendships.dart';
+import 'package:twitter_client/src/endpoints/geo.dart';
+import 'package:twitter_client/src/endpoints/lists.dart';
+import 'package:twitter_client/src/endpoints/media.dart';
+import 'package:twitter_client/src/endpoints/mutes.dart';
 import 'package:twitter_client/src/endpoints/oauth.dart';
-import 'package:twitter_client/twitter.dart';
+import 'package:twitter_client/src/endpoints/saved_searches.dart';
+import 'package:twitter_client/src/endpoints/statuses.dart';
+import 'package:twitter_client/src/endpoints/trends.dart';
+import 'package:twitter_client/src/endpoints/users.dart';
 
-/// Wrapper class used to simplify requests to Twitter's API
 class TwitterClient {
-  TwitterAPI twitter;
+  late final TwitterAPI twitter;
 
+  late Account account;
+  late Blocks blocks;
+  late Collections collections;
+  late CustomProfiles customProfiles;
+  late DirectMessages directMessages;
+  late Favorites favorites;
+  late Feedback feedback;
+  late Followers followers;
+  late Friends friends;
+  late Friendships friendships;
+  late Geo geo;
+  late Lists lists;
+  late Media media;
+  late Mutes mutes;
   late OAuth oAuth;
+  late SavedSearches savedSearches;
+  late Statuses statuses;
+  late Trends trends;
+  late Users users;
 
-  TwitterClient(this.twitter) {
-    this.oAuth = new OAuth(this.twitter);
-  }
+  TwitterClient({
+    required String consumerKey,
+    required String consumerSecret,
+    String token = "",
+    String tokenSecret = "",
+  }) {
+    this.twitter = new TwitterAPI(
+      consumerKey: consumerKey,
+      consumerSecret: consumerSecret,
+      token: token,
+      tokenSecret: tokenSecret
+    );
 
-  /// Get the list of followers of someone
-  Future<String> getFollowersList() async {
-    Response response = await twitter.get("/1.1/followers/list.json", params: {
-      "screen_name": "CStar_OW",
-      "cursor": "-1"
-    });
-
-    if (response.statusCode != 200) throw("Tweet couldn't be sent.");
-
-    print("nice");
-
-    return "bruh";
-  }
-
-  /// Send a Tweet to Twitter
-  /// [tweet] is the content of your Tweet
-  /// [reply_to] is the ID of the tweet to reply to
-  /// [media_ids] is a list of IDs of images you've uploaded to Twitter
-  Future<Tweet> sendTweet(String tweet, {String? replyTo, List<String>? mediaIDs}) async {
-    Map<String, String> params = {
-      "status": tweet
-    };
-
-    // Tweet ID that we're replying to
-    if (replyTo != null) {
-      params.addAll({
-        "auto_populate_reply_metadata": "true",
-        "in_reply_to_status_id": replyTo
-      });
-    }
-
-    // List of Medias we're uploading alongside the picture
-    if (mediaIDs != null) {
-      params.addAll({
-        "media_ids": mediaIDs.join(',')
-      });
-    }
-
-    Response response = await twitter.post("/1.1/statuses/update.json", params: params);
-
-    if (response.statusCode != 200) throw("Tweet couldn't be sent.");
-
-    return new Tweet.fromJson(jsonDecode(response.body));
-  }
-
-  /// Get home timeline
-  Future<void> getHomeTimeline({
-    int count = 40,
-    String? sinceID
-  }) async {
-    Map<String, String> params = {
-      "count": "$count",
-      "include_my_retweet": "true",
-      "cards_platform": "web",
-      "include_entities": "true",
-      "include_user_entities": "true",
-      "include_cards": "true",
-      "send_error_codes": "true",
-      "tweet_mode": "extended",
-      "include_ext_alt_text": "true",
-      "include_reply_count": "true"
-    };
-
-    if (sinceID != null) {
-      params.addAll({
-        "since_id": "$sinceID"
-      });
-    }
-
-    Response response = await twitter.get("/1.1/statuses/home_timeline.json", params: params);
-
-    if (response.statusCode != 200) {
-      throw "Couldn't fetch home timeline!";
-    }
-
-    print(json.decode(response.body));
-  }
-
-  /// Read a conversation
-  /// [tweetID] is the tweet ID of the conversation you wanna fetch
-  Future<List<Tweet>> getConversation(String tweetID) async {
-    Response response = await twitter.get("/2/timeline/conversation/$tweetID.json", params: {
-      "include_reply_count": "true",
-      "cards_platform": "Web-13",
-      "include_entities": "true",
-      "include_user_entities": "true",
-      "include_cards": "true",
-      "tweet_mode": "extended",
-      "include_ext_alt_text": "true"
-    });
-
-    Map<String, dynamic> body = json.decode(response.body);
-
-    Map<String, dynamic> tweets = body["globalObjects"]["tweets"];
-
-    return tweets.entries.map((tweet) => Tweet.fromJson(tweet.value)).toList();
+    this.account = new Account(twitter);
+    this.blocks = new Blocks(twitter);
+    this.collections = new Collections(twitter);
+    this.customProfiles = new CustomProfiles(twitter);
+    this.directMessages = new DirectMessages(twitter);
+    this.favorites = new Favorites(twitter);
+    this.feedback = new Feedback(twitter);
+    this.followers = new Followers(twitter);
+    this.friends = new Friends(twitter);
+    this.friendships = new Friendships(twitter);
+    this.geo = new Geo(twitter);
+    this.lists = new Lists(twitter);
+    this.media = new Media(twitter);
+    this.mutes = new Mutes(twitter);
+    this.oAuth = new OAuth(twitter);
+    this.savedSearches = new SavedSearches(twitter);
+    this.statuses = new Statuses(twitter);
+    this.trends = new Trends(twitter);
+    this.users = new Users(twitter);
   }
 }
