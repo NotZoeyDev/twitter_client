@@ -15,3 +15,5 @@ dependencies:
   http: ^0.13.4
 
 flutter:
+dev_dependencies: 
+  test: ^1.19.3
