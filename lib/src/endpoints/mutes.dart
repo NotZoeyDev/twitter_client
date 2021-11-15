@@ -1,21 +1,30 @@
 import 'package:twitter_client/src/api.dart';
 
-class Mute {
+class Mutes {
+  final TwitterAPI twitter;
+  late final MutesUsers users;
+
+  Mutes(this.twitter) {
+    this.users = new MutesUsers(twitter);
+  }
+}
+
+class MutesUsers {
   final TwitterAPI twitter;
 
-  Mute(this.twitter);
+  MutesUsers(this.twitter);
 
   /// Returns an array of numeric user ids the authenticating user has muted.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/mute-block-report-users/api-reference/get-mutes-users-ids
-  Future<void> usersIDs() async {
+  Future<void> get() async {
 
   }
 
   /// Returns an array of user objects the authenticating user has muted.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/mute-block-report-users/api-reference/get-mutes-users-list
-  Future<void> usersList() async {
+  Future<void> list() async {
 
   }
 
@@ -26,7 +35,7 @@ class Mute {
   /// Changes will be eventually consistent.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/mute-block-report-users/api-reference/post-mutes-users-create
-  Future<void> usersCreate() async {
+  Future<void> create() async {
 
   }
 
@@ -37,7 +46,8 @@ class Mute {
   /// Changes will be eventually consistent.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/mute-block-report-users/api-reference/post-mutes-users-destroy
-  Future<void> usersDestroy() async {
+  Future<void> destroy() async {
 
   }
+
 }
