@@ -6,16 +6,16 @@ const BASE_URL = "api.twitter.com";
 
 /// Wrapper class to call the Twitter API doing raw requests
 class TwitterAPI {
-  String? consumerKey;
-  String? consumerSecret;
+  String consumerKey;
+  String consumerSecret;
   String token;
   String tokenSecret;
 
   DeviceInfo? deviceInfo;
   
   TwitterAPI({
-    this.consumerKey,
-    this.consumerSecret,
+    required this.consumerKey,
+    required this.consumerSecret,
     this.token = "",
     this.tokenSecret = "",
     this.deviceInfo
@@ -132,6 +132,12 @@ class TwitterAPI {
     });
 
     return output;
+  }
+
+  /// Generate a proper map for params
+  Map<String, String> validateParams(Map<String, String?> json) {
+    json.removeWhere((key, value) => value == null);
+    return json.cast();
   }
 
   /// Do a post request to [url] using the [params] and [body]

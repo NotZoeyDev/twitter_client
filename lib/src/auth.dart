@@ -20,23 +20,23 @@ enum KeyType {
 
 class OAuthHelper {
   final String _signatureMethod = "HMAC-SHA1";
-  final String _version = "1.1";
+  final String _version = "1.0";
 
-  String? _nonce;
-  String? _timestamp;
+  late String _nonce;
+  late String _timestamp;
 
-  String? _consumerKey;
-  String? _consumerSecret;
-  String? _token;
-  String? _tokenSecret;
+  late String _consumerKey;
+  late String _consumerSecret;
+  late String? _token;
+  late String? _tokenSecret;
 
-  KeyType? type;
+  late KeyType type;
 
   OAuthHelper({
-    String? consumerKey,
-    String? consumerSecret,
-    String token = "",
-    String tokenSecret = ""
+    required String consumerKey,
+    required String consumerSecret,
+    String? token,
+    String? tokenSecret
   }) {
     _nonce = _getNonce();
     _timestamp = _getTimestamp();
@@ -120,14 +120,14 @@ class OAuthHelper {
     }
 
     List<String> _headers = [
-      encodeHeaderString("oauth_consumer_key", _consumerKey!),
-      encodeHeaderString("oauth_nonce", _nonce!),
+      encodeHeaderString("oauth_consumer_key", _consumerKey),
+      encodeHeaderString("oauth_nonce", _nonce),
       encodeHeaderString("oauth_signature", signature),
       encodeHeaderString("oauth_signature_method", _signatureMethod),
-      encodeHeaderString("oauth_timestamp", _timestamp!),
+      encodeHeaderString("oauth_timestamp", _timestamp),
     ];
 
-    if (_token != "") {
+    if (_token != null) {
       _headers.add(encodeHeaderString("oauth_token", _token!));
     }
 
@@ -183,9 +183,9 @@ class OAuthHelper {
     // Create our signing keyt
     String signingKey = "";
 
-    signingKey += _percentEncode(_consumerSecret!) + "&";
+    signingKey += _percentEncode(_consumerSecret) + "&";
 
-    if (_tokenSecret != "") {
+    if (_tokenSecret != null) {
       signingKey += _percentEncode(_tokenSecret!);
     }
 
