@@ -4,7 +4,7 @@ import 'package:twitter_client/src/responses/access_token.dart';
 import 'package:twitter_client/src/responses/request_token.dart';
 
 class OAuth {
-  TwitterAPI twitter;
+  final TwitterAPI twitter;
 
   OAuth(this.twitter);
 
@@ -18,12 +18,12 @@ class OAuth {
     return RequestToken.fromJson(values);
   }
 
-    /// Generate the authorization URL
+  /// Get an authorization URL using [oauthToken]
   String authorizationUrl(String oauthToken) {
     return "https://api.twitter.com/oauth/authenticate?oauth_token=$oauthToken";
   }
 
-  /// Get our access token
+  /// Get the user's access token using the [oauthToken] and [oauthVerifier]
   Future<AccessToken> accessToken(String oauthToken, String oauthVerifier) async {
     Response response = await twitter.post("/oauth/access_token", params: {
       "oauth_token": oauthToken,
@@ -34,7 +34,7 @@ class OAuth {
     return AccessToken.fromJson(values);
   }
 
-  /// Get our access token via xauth
+  /// Get the user's access token via xauth ([username] + [password] login)
   Future<AccessToken> accessTokenViaXauth(String username, String password) async {
     Response response = await twitter.post("/oauth/access_token", body: {
       "x_auth_mode": "client_auth",
