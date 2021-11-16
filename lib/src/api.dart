@@ -119,40 +119,25 @@ class TwitterAPI {
     return Uri.https("api.twitter.com", urlWithoutQuery, paramsWithQuery);
   }
 
-  /// Convert a list of (value=key&value=key) into a map
-  Map<String, String> responseToMap(String response) {
-    Map<String, String> output = new Map();
-    List<String> pairList = response.split("&");
-
-    pairList.forEach((element) { 
-      List<String> values = element.split("=");
-      output.addAll({
-        values[0]: values[1]
-      });
-    });
-
-    return output;
-  }
-
   /// Generate a proper map for params
-  Map<String, String> validateParams(Map<String, String?> json) {
+  Map<String, String> createParams(Map<String, dynamic> json) {
     json.removeWhere((key, value) => value == null);
-    return json.cast();
+    return json.map((key, value) => MapEntry(key, value.toString()));
   }
 
   /// Do a post request to [url] using the [params] and [body]
-  Future<http.Response> post(String url, { Map<String, String>? params, Map<String, String>? body }) async {
+  Future<http.Response> post(String url, {Map<String, String>? params, Map<String, String>? body}) async {
     if (body == null) body = new Map();
     return await _request("POST", url, params, body: body);
   }
 
   /// Do a get request to [url] using the [params] and [body]
-  Future<http.Response> get(String url, { Map<String, String>? params }) async {
+  Future<http.Response> get(String url, {Map<String, String>? params}) async {
     return await _request("GET", url, params);
   }
 
   /// Do a delete request to [url] using the [params] and [body]
-  Future<http.Response> delete(String url, { Map<String, String>? params }) async {
+  Future<http.Response> delete(String url, {Map<String, String>? params}) async {
     return await _request("DELETE", url, params);
   }
 }
