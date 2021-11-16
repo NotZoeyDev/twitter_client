@@ -1,3 +1,4 @@
+import 'package:http/http.dart';
 import 'package:twitter_client/src/api.dart';
 
 class Users {
@@ -33,5 +34,24 @@ class Users {
   /// https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/mute-block-report-users/api-reference/post-users-report_spam
   Future<void> reportSpam() async {
 
+  }
+
+  /// Returns a map of the available size variations of the specified user's profile banner.
+  /// If the user has not uploaded a profile banner, a HTTP 404 will be served instead.
+  /// 
+  /// https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/manage-account-settings/api-reference/get-users-profile_banner
+  Future<void> profileBanner({
+    /// The ID of the user for whom to return results.
+    int? userID,
+
+    /// The screen name of the user for whom to return results.
+    String? screenName,
+  }) async {
+    Map<String, String> params = twitter.createParams({
+      'user_id': userID,
+      'screen_name': screenName,
+    });
+
+    Response response = await twitter.get("/1.1/users/profile_banner.json", params: params);
   }
 }
