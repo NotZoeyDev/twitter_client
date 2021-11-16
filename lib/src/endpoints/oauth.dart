@@ -8,13 +8,28 @@ class OAuth {
 
   OAuth(this.twitter);
 
+  /// Convert a list of (value=key&value=key) into a map
+  Map<String, String> _responseToMap(String response) {
+    Map<String, String> output = new Map();
+    List<String> pairList = response.split("&");
+
+    pairList.forEach((element) { 
+      List<String> values = element.split("=");
+      output.addAll({
+        values[0]: values[1]
+      });
+    });
+
+    return output;
+  }
+
   /// Generate an Oauth token to authorize an user
   Future<RequestToken> requestToken() async {
     Response response = await twitter.post("/oauth/request_token", params: {
       "oauth_callback": "oob"
     });
 
-    Map<String, String> values = twitter.responseToMap(response.body);
+    Map<String, String> values = _responseToMap(response.body);
     return RequestToken.fromJson(values);
   }
 
@@ -30,7 +45,7 @@ class OAuth {
       "oauth_verifier": oauthVerifier
     });
 
-    Map<String, String> values = twitter.responseToMap(response.body);
+    Map<String, String> values = _responseToMap(response.body);
     return AccessToken.fromJson(values);
   }
 
@@ -45,7 +60,7 @@ class OAuth {
     if (response.body == "Login denied due to suspicious activity. Please check your email for further login instructions.") throw("Login denied.");
     if (response.body == "Invalid user name or password") throw("Invalid username or password.");
 
-    Map<String, String> values = twitter.responseToMap(response.body);
+    Map<String, String> values = _responseToMap(response.body);
     return AccessToken.fromJson(values);
   }
 }
