@@ -6,20 +6,22 @@ const BASE_URL = "api.twitter.com";
 
 /// Wrapper class to call the Twitter API doing raw requests
 class TwitterAPI {
-  String consumerKey;
-  String consumerSecret;
-  String token;
-  String tokenSecret;
+  String _consumerKey;
+  String _consumerSecret;
+  String _token;
+  String _tokenSecret;
 
   DeviceInfo? deviceInfo;
   
-  TwitterAPI({
-    required this.consumerKey,
-    required this.consumerSecret,
-    this.token = "",
-    this.tokenSecret = "",
-    this.deviceInfo
-  });
+  TwitterAPI(
+    this._consumerKey,
+    this._consumerSecret,
+    this._token,
+    this._tokenSecret,
+    {
+      this.deviceInfo
+    }
+  );
 
   /// Call the Twitter API with proper oauth headers and signature
   /// [method] is the HTTP method to use, GET or POST.
@@ -32,10 +34,10 @@ class TwitterAPI {
     
     // Create our OauthHelper instance
     OAuthHelper helper = new OAuthHelper(
-      consumerKey: this.consumerKey,
-      consumerSecret: this.consumerSecret,
-      token: this.token, 
-      tokenSecret: this.tokenSecret
+      consumerKey: this._consumerKey,
+      consumerSecret: this._consumerSecret,
+      token: this._token, 
+      tokenSecret: this._tokenSecret
     );
 
     if (body != null) {

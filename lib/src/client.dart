@@ -49,10 +49,10 @@ class TwitterClient {
     String tokenSecret = "",
   }) {
     this.twitter = new TwitterAPI(
-      consumerKey: consumerKey,
-      consumerSecret: consumerSecret,
-      token: token,
-      tokenSecret: tokenSecret
+      consumerKey,
+      consumerSecret,
+      token,
+      tokenSecret
     );
 
     this.account = new Account(twitter);
