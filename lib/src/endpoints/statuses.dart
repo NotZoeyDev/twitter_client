@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:twitter_client/src/api.dart';
 import 'package:twitter_client/src/objects/tweet.dart';
+import 'package:twitter_client/src/responses/statuses.dart';
 
 class Statuses {
   final TwitterAPI twitter;
@@ -72,6 +73,7 @@ class Statuses {
     });
 
     Response response = await twitter.get("/1.1/statuses/mentions_timeline.json", params: params);
+    print(response.body);
   }
 
   /// Returns a collection of the most recent Tweets posted by the user indicated by the screen_name or user_id parameters.
@@ -195,7 +197,7 @@ class Statuses {
   /// Returns the destroyed status if successful.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/post-statuses-destroy-id
-  Future<void> destroy(
+  Future<Tweet> destroy(
     /// The numerical ID of the desired status.
     int id,
     {
@@ -208,6 +210,11 @@ class Statuses {
     });
 
     Response response = await twitter.post("/1.1/statuses/destroy/$id.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error destroying status";
+    }
+
+    return Tweet.fromJson(jsonDecode(response.body)); 
   }
 
   /// Returns a single Tweet, specified by the id parameter. The Tweet's author will also be embedded within the Tweet.
@@ -253,7 +260,7 @@ class Statuses {
   /// Returns fully-hydrated Tweet objects for up to 100 Tweets per request, as specified by comma-separated values passed to the id parameter.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-lookup
-  Future<Tweet> lookup(
+  Future<List<Tweet>> lookup(
     /// The numerical ID of the desired Tweet.
     int id,
     {
@@ -287,14 +294,15 @@ class Statuses {
       throw "Error looking up status";
     }
 
-    return Tweet.fromJson(jsonDecode(response.body));
+    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList();
+    return tweets;
   }
 
   /// Retweets a tweet.
   /// Returns the original Tweet with Retweet details embedded.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/post-statuses-retweet-id
-  Future<void> retweet(
+  Future<Tweet> retweet(
     /// The numerical ID of the desired status.
     String id,
     {
@@ -307,13 +315,18 @@ class Statuses {
     });
 
     Response response = await twitter.post("/1.1/statuses/retweet/$id.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error retweeting status";
+    }
+
+    return Tweet.fromJson(jsonDecode(response.body));
   }
 
   /// Untweets a retweeted status.
   /// Returns the original Tweet with Retweet details embedded.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/post-statuses-unretweet-id
-  Future<void> unretweet(
+  Future<Tweet> unretweet(
     /// The numerical ID of the desired status.
     String id,
     {
@@ -326,12 +339,17 @@ class Statuses {
     });
 
     Response response = await twitter.post("/1.1/statuses/unretweet/$id.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error unretweeting status";
+    }
+
+    return Tweet.fromJson(jsonDecode(response.body));
   }
 
   /// Returns a collection of the 100 most recent retweets of the Tweet specified by the [id] parameter.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-retweets-id
-  Future<void> retweets(
+  Future<List<Tweet>> retweets(
     /// The numerical ID of the desired status.
     String id,
     {
@@ -348,13 +366,19 @@ class Statuses {
     });
 
     Response response = await twitter.post("/1.1/statuses/retweets/$id.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error fetching retweets";
+    }
+
+    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList();
+    return tweets;
   }
 
   /// Returns the most recent Tweets authored by the authenticating user that have been retweeted by others.
   /// This timeline is a subset of the user's GET statuses/user_timeline.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-retweets_of_me
-  Future<void> retweetsOfMe({
+  Future<List<Tweet>> retweetsOfMe({
     /// Specifies the number of records to retrieve.
     int? count,
 
@@ -383,12 +407,18 @@ class Statuses {
     });
 
     Response response = await twitter.post("/1.1/statuses/retweets_of_me.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error fetching retweets";
+    }
+
+    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList();
+    return tweets;
   }
 
   /// Returns a collection of up to 100 user IDs belonging to users who have retweeted the Tweet specified by the id parameter.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-retweeters-ids
-  Future<void> retweeters(
+  Future<Retweeters> retweeters(
     /// The numerical ID of the desired status.
     String id,
     {
@@ -409,5 +439,10 @@ class Statuses {
     });
 
     Response response = await twitter.post("/1.1/statuses/retweets_of_me.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error fetching retweets";
+    }
+
+    return Retweeters.fromJson(jsonDecode(response.body));
   }
 }
