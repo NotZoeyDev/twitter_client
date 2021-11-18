@@ -3,13 +3,14 @@ import 'package:twitter_client/src/models/device_info.dart';
 import 'package:twitter_client/twitter.dart'; 
 
 const BASE_URL = "api.twitter.com";
+const MEDIA_BASE_URL = "upload.twitter.com";
 
 /// Wrapper class to call the Twitter API doing raw requests
 class TwitterAPI {
   String _consumerKey;
   String _consumerSecret;
-  String _token;
-  String _tokenSecret;
+  String? _token;
+  String? _tokenSecret;
 
   DeviceInfo? deviceInfo;
   
@@ -29,8 +30,10 @@ class TwitterAPI {
   Future<http.Response> _request(String method, String url, Map<String, String>? params, {Map<String, String>? body}) async {
     if (params == null) params = {};
 
-    Uri originalUrl = Uri.parse("https://$BASE_URL$url");
-    Uri finalUrl = _fixedURL(url, params);
+    String baseUrl = url.contains("/media/") ? MEDIA_BASE_URL : BASE_URL;
+
+    Uri originalUrl = Uri.parse("https://$baseUrl$url");
+    Uri finalUrl = _fixedURL(baseUrl, url, params);
     
     // Create our OauthHelper instance
     OAuthHelper helper = new OAuthHelper(
@@ -79,27 +82,93 @@ class TwitterAPI {
 
   /// Get extra headers
   Future<Map<String, String>> _getExtraHeaders(KeyType? keyType) async {
-    Map<String, String> extraHeaders = new Map();
+    Map<String, String> extraHeaders = Map<String, String>();
 
-    // Twitter for Android requires extra headers to make the request works using Twitter's keys
-    if (keyType == KeyType.Android) {
-      const String clientName = "TwitterAndroid";
-      const String versionName = "6.41.0";
-      const String apiVersion = "5";
-      const String internalVersionName = "7160062-r-930";
-
-      // Default values used when using the keys on a non Android platform
-      DeviceInfo info = this.deviceInfo ?? new DeviceInfo();
-
-      extraHeaders.addAll({
-        "User-Agent": "$clientName/$versionName ($internalVersionName) ${info.model}/${info.sdkVersion} (${info.manufacturer};${info.model};${info.brand};${info.product};0;;0)",
-        "Accept-Language": "en_US",
-        "X-Twitter-Client": clientName,
-        "X-Twitter-Client-Language": "en_US",
-        "X-Twitter-Client-Version": versionName,
-        "X-Twitter-API-Version": apiVersion
-      });
+    if (keyType == KeyType.Other) {
+      return extraHeaders;
     }
+
+    const String versionName = "8.91.1";
+    const String apiVersion = "5";
+
+    String clientName = "";
+    switch(keyType) {
+      case KeyType.iOS: 
+        clientName = "Twitter-iPhone";
+        break;
+
+      case KeyType.iPad:
+        clientName = "Twitter-Ipad";
+        break;
+
+      case KeyType.Android:
+        clientName = "TwitterAndroid";
+        break;
+
+      default:
+        break;
+    }
+
+    DeviceInfo? info = this.deviceInfo;
+    if (info == null) {
+      switch(keyType) {
+        case KeyType.iOS: 
+          // iPhone 12
+          info = new DeviceInfo(
+            manufacturer: "Apple",
+            model: "iOS",
+            sdkVersion: "15.1",
+            brand: "2020",
+            product: "iPhone13.2",
+          );
+          break;
+
+        case KeyType.iPad:
+          // iPad 8th
+          info = new DeviceInfo(
+            manufacturer: "Apple",
+            model: "iOS",
+            sdkVersion: "15.1",
+            brand: "2020",
+            product: "iPad11,6",
+          );
+          break;
+
+        case KeyType.Android:
+          // Pixel 3
+          info = new DeviceInfo(
+            model: "Pixel 3",
+            sdkVersion: "30",
+            manufacturer: "Google",
+            brand: "google",
+            product: "blueline",
+          );
+          break;
+
+        default:
+          info = new DeviceInfo(
+            manufacturer: "",
+            model: "",
+            sdkVersion: "",
+            brand: "",
+            product: "",
+          );
+          break;
+      }
+    }
+
+    final String userAgent = keyType == KeyType.Android
+      ? "$clientName/$versionName ${info.model}/${info.sdkVersion} (${info.manufacturer};${info.model};${info.brand};${info.product};0;;0)"
+      : "$clientName/$versionName ${info.model}/${info.sdkVersion} (${info.manufacturer};${info.product};;;;;1;${info.brand})";
+
+    extraHeaders.addAll({
+      "User-Agent": userAgent,
+      "Accept-Language": "en_US",
+      "X-Twitter-Client": clientName,
+      "X-Twitter-Client-Language": "en_US",
+      "X-Twitter-Client-Version": versionName,
+      "X-Twitter-API-Version": apiVersion
+    });
 
     return extraHeaders;
   }
@@ -108,7 +177,7 @@ class TwitterAPI {
   // If the URL includes some query, it needs to be included in the oauth signature
   // The final URL includes the "data" as part of the query but these shouldn't be part of the oauth signature
   // This fixes the url and add the missing query info that aren't part of the base url
-  Uri _fixedURL(String url, Map<String, String>? params) {
+  Uri _fixedURL(String baseUrl, String url, Map<String, String>? params) {
     Map<String, String>? paramsWithQuery = params;
     String urlWithoutQuery = "";
 
@@ -118,7 +187,7 @@ class TwitterAPI {
 
     urlWithoutQuery = url.replaceAll("?${Uri.parse(url).query}", "");
 
-    return Uri.https("api.twitter.com", urlWithoutQuery, paramsWithQuery);
+    return Uri.https(baseUrl, urlWithoutQuery, paramsWithQuery);
   }
 
   /// Generate a proper map for params
