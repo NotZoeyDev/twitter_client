@@ -105,6 +105,10 @@ class TwitterAPI {
         clientName = "TwitterAndroid";
         break;
 
+      case KeyType.Mac:
+        clientName = "Twitter-Mac";
+        break;
+
       default:
         break;
     }
@@ -131,6 +135,17 @@ class TwitterAPI {
             sdkVersion: "15.1",
             brand: "2020",
             product: "iPad11,6",
+          );
+          break;
+
+        case KeyType.Mac:
+          // Macbook Pro m1
+          info = new DeviceInfo(
+            manufacturer: "Apple",
+            model: "iOS",
+            sdkVersion: "15.0",
+            brand: "2021",
+            product: "MacBookPro17,1",
           );
           break;
 

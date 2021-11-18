@@ -57,7 +57,7 @@ class OAuthHelper {
       KeyType.Android: "bb627dabf83c0d81eef4517f2965f3e0",
       KeyType.iPad: "5a5702e07d415992c61b75995b91fb99",
       KeyType.iOS: "f9c60161c770d8cc806f7aaa78d12a38",
-      //KeyType.Mac: "063c9727eaa70eda40e49f2517f5afb2",
+      KeyType.Mac: "063c9727eaa70eda40e49f2517f5afb2",
     };
     
     String toHash = "$_consumerKey+_$_consumerSecret";
