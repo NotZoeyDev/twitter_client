@@ -6,10 +6,10 @@ class DeviceInfo {
   String product;
 
   DeviceInfo({
-    this.model = "Pixel 3",
-    this.sdkVersion = "30",
-    this.manufacturer = "Google",
-    this.brand = "google",
-    this.product = "blueline",
+    required this.model,
+    required this.sdkVersion,
+    required this.manufacturer,
+    required this.brand,
+    required this.product,
   });
 }
