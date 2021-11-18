@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:http/http.dart';
 import 'package:twitter_client/src/api.dart';
+import 'package:twitter_client/src/responses/media.dart';
 
 class Media {
   final TwitterAPI twitter;
@@ -13,8 +17,41 @@ class Media {
   /// Use this endpoint to upload images to Twitter.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/media/upload-media/api-reference/post-media-upload
-  Future<void> upload() async {
+  Future<MediaUpload> upload(
+    {
+      /// The raw binary file content being uploaded.
+      String? media,
 
+      /// The category that represents how the media will be used. This field is required when using the media with the Ads APIPossible values: amplify_video, tweet_gif, tweet_image, and tweet_video.
+      String? mediaCategory,
+
+      /// The base64-encoded file content being uploaded.
+      String? mediaData,
+
+      /// A comma-separated list of user IDs to set as additional owners allowed to use the returned media_id in Tweets or Cards.
+      List<String>? additionalOwners,
+    }
+  ) async {
+    if (media == null && mediaData == null) {
+      throw "Either media or mediaData has to be set";
+    }
+
+    Map<String, String> params = twitter.createParams({
+      'media_category': mediaCategory,
+      'additional_owners': additionalOwners,
+    });
+
+    Map<String, String> body = twitter.createParams({
+      'media': media,
+      'media_data': mediaData
+    });
+
+    Response response = await twitter.post("/1.1/media/upload.json", params: params, body: body);
+    if (response.statusCode != 200) {
+      throw "Something went wrong during the upload";
+    }
+
+    return MediaUpload.fromJson(jsonDecode(response.body));
   }
 
   /// The INIT command request is used to initiate a file upload session.
