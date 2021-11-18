@@ -32,10 +32,10 @@ class Sizes {
 /// Size object 
 class Size {
   /// Width in pixels of this size.
-  String w;
+  int w;
 
   /// Height in pixels of this size.
-  String h;
+  int h;
 
   /// Resizing method used to obtain this size.
   /// A value of fit means that the media was resized to fit one dimension, keeping its native aspect ratio.

@@ -47,6 +47,6 @@ class Place {
     json['full_name'],
     json['country_code'],
     json['country'],
-    json['bounding_box'],
+    BoundingBox.fromJson(json['bounding_box']),
   );
 }

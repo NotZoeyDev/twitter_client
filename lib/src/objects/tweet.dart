@@ -21,10 +21,10 @@ class Tweet {
   String text;
 
   /// Utility used to post the Tweet, as an HTML-formatted string.
-  String source;
+  String? source;
 
   /// Indicates whether the value of the text parameter was truncated, for example, as a result of a retweet exceeding the original Tweet text length limit of 140 characters.
-  bool truncated;
+  bool? truncated;
 
   /// If the represented Tweet is a reply, this field will contain the integer representation of the original Tweet’s ID.
   int? inReplyToStatusId;
@@ -42,7 +42,7 @@ class Tweet {
   String? inReplyToScrenName;
 
   /// The user who posted this Tweet. See User data dictionary for complete list of attributes.
-  User user;
+  User? user;
 
   /// Represents the geographic location of this Tweet as reported by the user or client application.
   Coordinates? coordinates;
@@ -59,7 +59,7 @@ class Tweet {
   String? quotedStatusIdStr;
 
   /// Indicates whether this is a Quoted Tweet.
-  bool isQuoteStatus;
+  bool ?isQuoteStatus;
 
   /// This field only surfaces when the Tweet is a quote Tweet.
   /// This attribute contains the Tweet object of the original Tweet that was quoted.
@@ -70,6 +70,8 @@ class Tweet {
   /// This attribute contains a representation of the original Tweet that was retweeted.
   Tweet? retweetedStatus;
 
+  _ExtendedTweet? extendedTweet;
+
   /// Indicates approximately how many times this Tweet has been quoted by Twitter users.
   int? quoteCount;
 
@@ -77,29 +79,29 @@ class Tweet {
   int? replyCount;
 
   /// Number of times this Tweet has been retweeted.
-  int retweetCount;
+  int? retweetCount;
 
   /// Indicates approximately how many times this Tweet has been liked by Twitter users.
   int? favoriteCount;
 
   /// Entities which have been parsed out of the text of the Tweet.
-  Entities entities;
+  Entities? entities;
 
   /// When between one and four native photos or one video or one animated GIF are in Tweet, contains an array 'media' metadata.
-  ExtendedEntities extendedEntities;
+  ExtendedEntities? extendedEntities;
 
   /// Indicates whether this Tweet has been liked by the authenticating user.
   bool? favorited;
 
   /// Indicates whether this Tweet has been Retweeted by the authenticating user.
-  bool retweeted;
+  bool? retweeted;
 
   /// This field only surfaces when a Tweet contains a link.
   /// The meaning of the field doesn’t pertain to the Tweet content itself, but instead it is an indicator that the URL contained in the Tweet may contain content or media identified as sensitive content.
   bool? possiblySensitive;
 
   /// Indicates the maximum value of the filter_level parameter which may be used and still stream this Tweet.
-  String filterLevel;
+  String? filterLevel;
 
   /// When present, indicates a BCP 47 language identifier corresponding to the machine-detected language of the Tweet text, or und if no language could be detected.
   String? lang;
@@ -109,16 +111,16 @@ class Tweet {
     this.id,
     this.idStr,
     this.text,
-    this.source,
-    this.truncated,
-    this.user,
-    this.isQuoteStatus,
-    this.retweetCount,
-    this.entities,
-    this.extendedEntities,
-    this.retweeted,
-    this.filterLevel,
     {
+      this.source,
+      this.truncated,
+      this.user,
+      this.isQuoteStatus,
+      this.retweetCount,
+      this.entities,
+      this.extendedEntities,
+      this.retweeted,
+      this.filterLevel,
       this.inReplyToStatusId,
       this.inReplyToStatusIdStr,
       this.inReplyToUserId,
@@ -130,6 +132,7 @@ class Tweet {
       this.quotedStatusIdStr,
       this.quotedStatus,
       this.retweetedStatus,
+      this.extendedTweet,
       this.quoteCount,
       this.replyCount,
       this.favoriteCount,
@@ -144,32 +147,46 @@ class Tweet {
     json['id'],
     json['id_str'],
     json['text'],
-    json['source'],
-    json['truncated'],
-    User.fromJson(json['user']),
-    json['is_quote_status'],
-    json['retweet_count'],
-    Entities.fromJson(json['entities']),
-    ExtendedEntities.fromJson(json['extended_entities']),
-    json['retweeted'],
-    json['filter_level'],
 
+    source: json['source'],
+    truncated: json['truncated'],
+    user: json['user'] != null ? User.fromJson(json['user']) : null,
+    isQuoteStatus: json['is_quote_status'],
+    retweetCount: json['retweet_count'],
+    entities: json['entities'] != null ? Entities.fromJson(json['entities']) : null,
+    extendedEntities: json['extended_entities'] != null ? ExtendedEntities.fromJson(json['extended_entities']) : null,
+    retweeted: json['retweeted'],
+    filterLevel: json['filter_level'],
     inReplyToStatusId: json['in_reply_to_status_id'],
     inReplyToStatusIdStr: json['in_reply_to_status_id_str'],
     inReplyToUserId: json['in_reply_to_user_id'],
     inReplyToUserIdStr: json['in_reply_to_user_id_str'],
     inReplyToScrenName: json['in_reply_to_screen_name'],
-    coordinates: Coordinates.fromJson(json['coordinates']),
-    place: Place.fromJson(json['place']),
+    coordinates: json['coordinates'] != null ? Coordinates.fromJson(json['coordinates']) : null,
+    place: json['place'] != null ? Place.fromJson(json['place']) : null,
     quotedStatusId: json['quoted_status_id'],
     quotedStatusIdStr: json['quoted_status_id_str'],
-    quotedStatus: Tweet.fromJson(json['quoted_status']),
-    retweetedStatus: Tweet.fromJson(json['retweeted_status']),
+    quotedStatus: json['quoted_status'] != null ? Tweet.fromJson(json['quoted_status']) : null,
+    retweetedStatus: json['retweeted_status'] != null ? Tweet.fromJson(json['retweeted_status']) : null,
+    extendedTweet: json['extended_tweet'] != null ? _ExtendedTweet.fromJson(json['extended_tweet']) : null,
     quoteCount: json['quote_count'],
     replyCount: json['reply_count'],
     favoriteCount: json['favorite_count'],
     favorited: json['favorited'],
     possiblySensitive: json['possibly_sensitive'],
     lang: json['lang'],
+  );
+}
+
+class _ExtendedTweet {
+  String fullText;
+  
+  Entities? entities;
+
+  _ExtendedTweet(this.fullText, this.entities);
+
+  factory _ExtendedTweet.fromJson(Map<String, dynamic> json) => _ExtendedTweet(
+    json['full_text'],
+    json['entities'] != null ? Entities.fromJson(json['entities']) : null,
   );
 }

@@ -5,46 +5,46 @@ import 'sizes.dart';
 /// https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/entities
 class Entities {
   /// Represents hashtags which have been parsed out of the Tweet text.
-  List<Hashtag> hashtags;
+  List<Hashtag>? hashtags;
 
   /// Represents media elements uploaded with the Tweet.
-  List<Media> media;
+  List<Media>? media;
 
   /// Represents URLs included in the text of a Tweet.
-  List<URL> urls;
+  List<URL>? urls;
 
   /// Represents other Twitter users mentioned in the text of the Tweet.
-  List<UserMention> userMentions;
+  List<UserMention>? userMentions;
 
   /// Represents symbols, i.e. $cashtags, included in the text of the Tweet.
-  List<Symbol> symbols;
+  List<Symbol>? symbols;
 
-  Entities(
+  Entities({
     this.hashtags,
     this.media,
     this.urls,
     this.userMentions,
     this.symbols,
-  );
+  });
 
   factory Entities.fromJson(Map<String, dynamic> json) => Entities(
-    json['hashtags'].cast<List<dynamic>>().map((dynamic hashtag) => Hashtag.fromJson(hashtag)),
-    json['media'].cast<List<dynamic>>().map((dynamic media) => Media.fromJson(media)),
-    json['urls'].cast<List<dynamic>>().map((dynamic url) => URL.fromJson(url)),
-    json['user_mentions'].cast<List<dynamic>>().map((dynamic mention) => UserMention.fromJson(mention)),
-    json['symbols'].cast<List<dynamic>>().map((dynamic symbol) => Symbol.fromJson(symbol)),
+    hashtags: json['hashtags'] != null ? json['hashtags'].map((hashtag) => Hashtag.fromJson(hashtag)).toList().cast<Hashtag>() : null,
+    media: json['media'] != null ? json['media'].map((media) => Media.fromJson(media)).toList().cast<Media>() : null,
+    urls: json['urls'] != null ? json['urls'].map((url) => URL.fromJson(url)).toList().cast<URL>() : null,
+    userMentions: json['user_mentions'] != null ? json['user_mentions'].map((mention) => UserMention.fromJson(mention)).toList().cast<UserMention>() : null,
+    symbols: json['symbols'] != null ? json['symbols'].map((symbol) => Symbol.fromJson(symbol)).toList().cast<Symbol>() : null,
   );
 }
 
 class ExtendedEntities {
-  List<Media> media;
+  List<Media>? media;
 
-  ExtendedEntities(
+  ExtendedEntities({
     this.media,
-  );
+  });
 
   factory ExtendedEntities.fromJson(Map<String, dynamic> json) => ExtendedEntities(
-    json['media'].cast<List<dynamic>>().map((dynamic media) => Media.fromJson(media)),
+    media: json['media'] != null ? json['media'].map((media) => Media.fromJson(media)).toList().cast<Media>() : null,
   );
 }
 
@@ -61,9 +61,9 @@ class Hashtag {
     this.text,
   );
 
-  factory Hashtag.fromJson(Map<String, dynamic> json) => Hashtag(
-    json['indices'],
-    json['text'],
+  factory Hashtag.fromJson(Map<String, dynamic>? json) => Hashtag(
+    json?['indices'],
+    json?['text'],
   );
 }
 
@@ -91,7 +91,7 @@ class Media {
   String mediaUrlHttps;
 
   /// An object showing available sizes for the media file.
-  Sizes sizes;
+  Sizes? sizes;
 
   /// For Tweets containing media that was originally associated with a different tweet, this ID points to the original Tweet.
   int? sourceStatusId;
@@ -128,10 +128,10 @@ class Media {
     json['expanded_url'],
     json['id'],
     json['id_str'],
-    json['indices'],
+    json['indices'].cast<int>(),
     json['media_url'],
     json['media_url_https'],
-    Sizes.fromJson(json['sizes']),
+    json['sizes'] != null ? Sizes.fromJson(json['sizes']) : null,
     json['type'],
     json['url'],
     sourceStatusId: json['source_status_id'],
@@ -160,11 +160,11 @@ class URL {
     this.url,
   );
 
-  factory URL.fromJson(Map<String, dynamic> json) => URL(
-    json['display_url'],
-    json['expanded_url'],
-    json['indices'],
-    json['url'],
+  factory URL.fromJson(Map<String, dynamic>? json) => URL(
+    json?['display_url'],
+    json?['expanded_url'],
+    json?['indices'],
+    json?['url'],
   );
 }
 
@@ -193,12 +193,12 @@ class UserMention {
     this.screenName,
   );
 
-  factory UserMention.fromJson(Map<String, dynamic> json) => UserMention(
-    json['id'],
-    json['id_str'],
-    json['indices'],
-    json['name'],
-    json['screen_name'],
+  factory UserMention.fromJson(Map<String, dynamic>? json) => UserMention(
+    json?['id'],
+    json?['id_str'],
+    json?['indices'],
+    json?['name'],
+    json?['screen_name'],
   );
 }
 
@@ -216,8 +216,8 @@ class Symbol {
     this.text
   );
 
-  factory Symbol.fromJson(Map<String, dynamic> json) => Symbol(
-    json['indices'],
-    json['text'],
+  factory Symbol.fromJson(Map<String, dynamic>? json) => Symbol(
+    json?['indices'],
+    json?['text'],
   );
 }
