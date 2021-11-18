@@ -2,7 +2,6 @@ import 'package:twitter_client/src/api.dart';
 import 'package:twitter_client/src/endpoints/account.dart';
 import 'package:twitter_client/src/endpoints/blocks.dart';
 import 'package:twitter_client/src/endpoints/collections.dart';
-import 'package:twitter_client/src/endpoints/custom_profiles.dart';
 import 'package:twitter_client/src/endpoints/direct_messages.dart';
 import 'package:twitter_client/src/endpoints/favorites.dart';
 import 'package:twitter_client/src/endpoints/feedback.dart';
@@ -25,7 +24,6 @@ class TwitterClient {
   late Account account;
   late Blocks blocks;
   late Collections collections;
-  late CustomProfiles customProfiles;
   late DirectMessages directMessages;
   late Favorites favorites;
   late Feedback feedback;
@@ -45,8 +43,8 @@ class TwitterClient {
   TwitterClient({
     required String consumerKey,
     required String consumerSecret,
-    String token = "",
-    String tokenSecret = "",
+    String? token,
+    String? tokenSecret,
   }) {
     this.twitter = new TwitterAPI(
       consumerKey,
@@ -58,7 +56,6 @@ class TwitterClient {
     this.account = new Account(twitter);
     this.blocks = new Blocks(twitter);
     this.collections = new Collections(twitter);
-    this.customProfiles = new CustomProfiles(twitter);
     this.directMessages = new DirectMessages(twitter);
     this.favorites = new Favorites(twitter);
     this.feedback = new Feedback(twitter);
