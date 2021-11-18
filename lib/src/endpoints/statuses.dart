@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:twitter_client/src/api.dart';
+import 'package:twitter_client/src/objects/tweet.dart';
 
 class Statuses {
   final TwitterAPI twitter;
@@ -114,7 +117,7 @@ class Statuses {
   /// Updates the authenticating user's current status, also known as Tweeting.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/post-statuses-update
-  Future<void> update(
+  Future<Tweet> update(
     /// The text of the status update.
     String status,
     {
@@ -180,6 +183,11 @@ class Statuses {
     });
 
     Response response = await twitter.post("/1.1/statuses/update.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error updating status";
+    }
+
+    return Tweet.fromJson(jsonDecode(response.body));
   }
 
   /// Destroys the status specified by the required ID parameter.
@@ -205,7 +213,7 @@ class Statuses {
   /// Returns a single Tweet, specified by the id parameter. The Tweet's author will also be embedded within the Tweet.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-show-id
-  Future<void> show(
+  Future<Tweet> show(
     /// The numerical ID of the desired Tweet.
     int id,
     {
@@ -235,13 +243,18 @@ class Statuses {
     });
 
     Response response = await twitter.get("/1.1/statuses/show.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error looking up status";
+    }
+
+    return Tweet.fromJson(jsonDecode(response.body)); 
   }
 
   /// Returns fully-hydrated Tweet objects for up to 100 Tweets per request, as specified by comma-separated values passed to the id parameter.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-lookup
-  Future<void> lookup(
-      /// The numerical ID of the desired Tweet.
+  Future<Tweet> lookup(
+    /// The numerical ID of the desired Tweet.
     int id,
     {
       /// The entities node will not be included when set to false.
@@ -270,6 +283,11 @@ class Statuses {
     });
 
     Response response = await twitter.get("/1.1/statuses/lookup.json", params: params);
+    if (response.statusCode != 200) {
+      throw "Error looking up status";
+    }
+
+    return Tweet.fromJson(jsonDecode(response.body));
   }
 
   /// Retweets a tweet.
