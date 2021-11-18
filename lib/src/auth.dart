@@ -15,6 +15,8 @@ List<int> allowedBytes = [
 enum KeyType {
   Android,
   Mac,
+  iOS,
+  iPad,
   Other
 }
 
@@ -51,16 +53,18 @@ class OAuthHelper {
 
   /// Get the key type based off the consumerKey+consumerSecret
   KeyType _getKeyType() {
-    const String _androidHash = "bb627dabf83c0d81eef4517f2965f3e0";
-    const String _macHash = "063c9727eaa70eda40e49f2517f5afb2";
+    const Map<KeyType, String> hashes = {
+      KeyType.Android: "bb627dabf83c0d81eef4517f2965f3e0",
+      KeyType.iPad: "5a5702e07d415992c61b75995b91fb99",
+      KeyType.iOS: "f9c60161c770d8cc806f7aaa78d12a38",
+      //KeyType.Mac: "063c9727eaa70eda40e49f2517f5afb2",
+    };
     
     String toHash = "$_consumerKey+_$_consumerSecret";
     String hash = md5.convert(utf8.encode(toHash)).toString();
 
-    if (hash == _androidHash) return KeyType.Android;
-    if (hash == _macHash) return KeyType.Mac;
-
-    return KeyType.Other;
+    KeyType keyType = hashes.keys.firstWhere((key) => hashes[key] == hash, orElse: () => KeyType.Other);
+    return keyType;
   }
 
   /// Generates a Nonce string
@@ -147,7 +151,7 @@ class OAuthHelper {
     };
 
     // Only add oauth_token if it was specified
-    if (_token != "") {
+    if (_token != null) {
       oauthParams.addAll({
         "oauth_token": _token
       });
