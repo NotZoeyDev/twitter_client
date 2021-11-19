@@ -86,8 +86,7 @@ class OAuthHelper {
   /// Documented here: https://developer.twitter.com/en/docs/basics/authentication/oauth-1-0a/percent-encoding-parameters
   String _percentEncode(String value) {
     List<int> bytes = utf8.encode(value);
-
-    String output = "";
+    List<int> output = <int>[];
 
     // Loop through each characters as bytes
     for (var i = 0; i < bytes.length; i++) {
@@ -95,16 +94,21 @@ class OAuthHelper {
 
       // Check if the byte is allowed
       if (!allowedBytes.contains(byte)) {
-        output += String.fromCharCode(0x25);
+        // Append a % sign
+        output.add(0x25);
 
-        output += byte.toRadixString(16)[0].toUpperCase();
-        output += byte.toRadixString(16)[1].toUpperCase();
+        /// Add the character as hexa
+        final hex = byte.toRadixString(16);
+        output.addAll([
+          ...utf8.encode(hex[0].toUpperCase()),
+          ...utf8.encode(hex[1].toUpperCase()),
+        ]);
       } else {
-        output += String.fromCharCode(byte);
+        output.add(byte);
       }
     }
 
-    return output;
+    return utf8.decode(output);
   }
 
   /// Generate a timestamp
@@ -165,7 +169,7 @@ class OAuthHelper {
     // Encode our params
     List<String> encodedParams = <String>[];
 
-    oauthParams.forEach((key, value) { 
+    oauthParams.forEach((key, value) {
       encodedParams.add("${_percentEncode(key)}=${_percentEncode(value!)}");
     });
 
@@ -196,7 +200,7 @@ class OAuthHelper {
     // Sign everything using Hmac with SHA1
     Hmac hmacSHA1 = new Hmac(sha1, utf8.encode(signingKey));
     Digest signature = hmacSHA1.convert(utf8.encode(signatureBase));
-
+  
     return base64Url.encode(signature.bytes);
   }
 }
