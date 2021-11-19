@@ -14,7 +14,7 @@ class Statuses {
   /// The home timeline is central to how most users interact with the Twitter service.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-home_timeline
-  Future<void> homeTimeline({
+  Future<List<Tweet>> homeTimeline({
     /// Specifies the number of records to retrieve.
     int? count,
 
@@ -43,12 +43,17 @@ class Statuses {
     });
 
     Response response = await twitter.get("/1.1/statuses/home_timeline.json", params: params);
+    if (response.statusCode != 200) {
+      throw "error fetching home timeline";
+    }
+
+    return jsonDecode(response.body).map((tweet) => Tweet.fromJson(tweet)).toList().cast<Tweet>();
   }
 
   /// Returns the 20 most recent mentions (Tweets containing a users's @screen_name) for the authenticating user.
   /// The timeline returned is the equivalent of the one seen when you view your mentions on twitter.com.
   /// This method can only return up to 800 tweets.
-  Future<void> mentionsTimeline({
+  Future<List<Tweet>> mentionsTimeline({
     /// Specifies the number of records to retrieve.
     int? count,
 
@@ -73,11 +78,15 @@ class Statuses {
     });
 
     Response response = await twitter.get("/1.1/statuses/mentions_timeline.json", params: params);
-    print(response.body);
+    if (response.statusCode != 200) {
+      throw "error fetching mentions timeline";
+    }
+
+    return jsonDecode(response.body).map((tweet) => Tweet.fromJson(tweet)).toList().cast<Tweet>();
   }
 
   /// Returns a collection of the most recent Tweets posted by the user indicated by the screen_name or user_id parameters.
-  Future<void> userTimeline({
+  Future<List<Tweet>> userTimeline({
     /// The ID of the user for whom to return results.
     int? userID,
 
@@ -114,6 +123,11 @@ class Statuses {
     });
 
     Response response = await twitter.get("/1.1/statuses/user_timeline.json", params: params);
+    if (response.statusCode != 200) {
+      throw "error fetching user timeline";
+    }
+
+    return jsonDecode(response.body).map((tweet) => Tweet.fromJson(tweet)).toList().cast<Tweet>();
   }
 
   /// Updates the authenticating user's current status, also known as Tweeting.
@@ -294,7 +308,7 @@ class Statuses {
       throw "Error looking up status";
     }
 
-    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList();
+    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList().cast<Tweet>();
     return tweets;
   }
 
@@ -370,7 +384,7 @@ class Statuses {
       throw "Error fetching retweets";
     }
 
-    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList();
+    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList().cast<Tweet>();
     return tweets;
   }
 
@@ -411,7 +425,7 @@ class Statuses {
       throw "Error fetching retweets";
     }
 
-    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList();
+    List<Tweet> tweets = jsonDecode(response.body).map((dynamic tweet) => Tweet.fromJson(tweet)).toList().cast<Tweet>();
     return tweets;
   }
 
