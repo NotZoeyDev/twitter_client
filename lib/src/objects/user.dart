@@ -1,3 +1,5 @@
+import 'package:twitter_client/src/objects/tweet.dart';
+
 /// User Object
 /// 
 /// https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/user
@@ -65,6 +67,8 @@ class User {
   /// When present, indicates that the content being withheld is a “user.”
   String? withheldScope;
 
+  Tweet? status;  
+
   User(
     this.id,
     this.idStr,
@@ -88,6 +92,7 @@ class User {
       this.location,
       this.url,
       this.description,
+      this.status,
     }
   );
 
@@ -114,5 +119,6 @@ class User {
     location: json['location'],
     url: json['url'],
     description: json['description'],
+    status: json['status'] != null ? Tweet.fromJson(json['status']) : null,
   );
 }

@@ -18,7 +18,9 @@ class Tweet {
   String idStr;
 
   /// The actual UTF-8 text of the status update.
-  String text;
+  String? text;
+
+  String? fullText;
 
   /// Utility used to post the Tweet, as an HTML-formatted string.
   String? source;
@@ -110,8 +112,9 @@ class Tweet {
     this.createdAt,
     this.id,
     this.idStr,
-    this.text,
     {
+      this.text,
+      this.fullText,
       this.source,
       this.truncated,
       this.user,
@@ -146,8 +149,9 @@ class Tweet {
     json['created_at'],
     json['id'],
     json['id_str'],
-    json['text'],
-
+    
+    text: json['text'],
+    fullText: json['full_text'],
     source: json['source'],
     truncated: json['truncated'],
     user: json['user'] != null ? User.fromJson(json['user']) : null,

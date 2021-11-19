@@ -61,9 +61,9 @@ class Hashtag {
     this.text,
   );
 
-  factory Hashtag.fromJson(Map<String, dynamic>? json) => Hashtag(
-    json?['indices'],
-    json?['text'],
+  factory Hashtag.fromJson(Map<String, dynamic> json) => Hashtag(
+    json['indices'].cast<int>(),
+    json['text'],
   );
 }
 
@@ -160,11 +160,11 @@ class URL {
     this.url,
   );
 
-  factory URL.fromJson(Map<String, dynamic>? json) => URL(
-    json?['display_url'],
-    json?['expanded_url'],
-    json?['indices'],
-    json?['url'],
+  factory URL.fromJson(Map<String, dynamic> json) => URL(
+    json['display_url'],
+    json['expanded_url'],
+    json['indices'].cast<int>(),
+    json['url'],
   );
 }
 
@@ -193,12 +193,12 @@ class UserMention {
     this.screenName,
   );
 
-  factory UserMention.fromJson(Map<String, dynamic>? json) => UserMention(
-    json?['id'],
-    json?['id_str'],
-    json?['indices'],
-    json?['name'],
-    json?['screen_name'],
+  factory UserMention.fromJson(Map<String, dynamic> json) => UserMention(
+    json['id'],
+    json['id_str'],
+    json['indices'].cast<int>(),
+    json['name'],
+    json['screen_name'],
   );
 }
 
