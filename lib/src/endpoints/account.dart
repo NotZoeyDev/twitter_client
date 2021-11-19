@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:twitter_client/src/api.dart';
+import 'package:twitter_client/src/objects/user.dart';
 
 class Account {
   TwitterAPI twitter;
@@ -52,7 +55,7 @@ class Account {
   /// Use this method to test if supplied user credentials are valid.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials
-  Future<void> verifyCredentials({
+  Future<User> verifyCredentials({
     /// The entities node will not be included when set to false.
     bool? includeEntities,
 
@@ -69,6 +72,11 @@ class Account {
     });
 
     Response response = await twitter.get("/1.1/account/verify_credentials.json", params: params);
+    if (response.statusCode != 200) {
+      throw "error verifying account";
+    }
+
+    return User.fromJson(jsonDecode(response.body));
   }
 
   /// Removes the uploaded profile banner for the authenticating user.
