@@ -1,5 +1,6 @@
 import 'package:twitter_client/src/api.dart';
 import 'package:twitter_client/src/endpoints/account.dart';
+import 'package:twitter_client/src/endpoints/activity.dart';
 import 'package:twitter_client/src/endpoints/blocks.dart';
 import 'package:twitter_client/src/endpoints/collections.dart';
 import 'package:twitter_client/src/endpoints/direct_messages.dart';
@@ -22,6 +23,7 @@ class TwitterClient {
   late final TwitterAPI twitter;
 
   late Account account;
+  late Activity activity;
   late Blocks blocks;
   late Collections collections;
   late DirectMessages directMessages;
@@ -54,6 +56,7 @@ class TwitterClient {
     );
 
     this.account = new Account(twitter);
+    this.activity = new Activity(twitter);
     this.blocks = new Blocks(twitter);
     this.collections = new Collections(twitter);
     this.directMessages = new DirectMessages(twitter);
