@@ -1,3 +1,5 @@
+import 'package:twitter_client/twitter.dart';
+
 import 'sizes.dart';
 
 /// Entities object
@@ -106,6 +108,8 @@ class Media {
   /// This corresponds with the URL embedded directly into the raw Tweet text, and the values for the indices parameter.
   String url;
 
+  VideoInfo? videoInfo;
+
   Media(
     this.displayUrl,
     this.expandedUrl,
@@ -119,7 +123,8 @@ class Media {
     this.url,
     {
       this.sourceStatusId,
-      this.sourceStatusIdStr
+      this.sourceStatusIdStr,
+      this.videoInfo,
     }
   );
 
@@ -136,6 +141,38 @@ class Media {
     json['url'],
     sourceStatusId: json['source_status_id'],
     sourceStatusIdStr: json['source_status_id_str'],
+    videoInfo: json['video_info'] != null ? VideoInfo.fromJson(json['video_info']) : null,
+  );
+}
+
+class VideoInfo {
+  List<int> aspectRatio;
+  int? durationMillis;
+  List<VideoVariant> variants;
+  VideoInfo(
+    this.aspectRatio,
+    this.durationMillis,
+    this.variants,
+  );
+
+  factory VideoInfo.fromJson(Map<String, dynamic> json) => VideoInfo(
+    json['aspect_ratio'].cast<int>(),
+    json['duration_millis'],
+    json['variants'].map((variant) => VideoVariant.fromJson(variant)).toList().cast<VideoVariant>(),
+  );
+}
+
+class VideoVariant {
+  int? bitrate;
+  String contentType;
+  String url;
+
+  VideoVariant(this.contentType, this.url, [this.bitrate]);
+
+  factory VideoVariant.fromJson(Map<String, dynamic> json) => VideoVariant(
+    json['content_type'],
+    json['url'],
+    json['bitrate']
   );
 }
 
