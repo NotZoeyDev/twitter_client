@@ -14,7 +14,7 @@ class BoundingBox {
   );
 
   factory BoundingBox.fromJson(Map<String, dynamic> json) => BoundingBox(
-    json['coordinates'],
+    json['coordinates'].cast<List<List<List<double>>>>(),
     json['type'],
   );
 }

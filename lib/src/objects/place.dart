@@ -26,7 +26,7 @@ class Place {
   String country;
 
   /// A bounding box of coordinates which encloses this place.
-  BoundingBox boundingBox;
+  //BoundingBox boundingBox;
 
   Place(
     this.id,
@@ -36,7 +36,7 @@ class Place {
     this.fullName,
     this.countryCode,
     this.country,
-    this.boundingBox,
+    //this.boundingBox,
   );
 
   factory Place.fromJson(Map<String, dynamic> json) => Place(
@@ -47,6 +47,6 @@ class Place {
     json['full_name'],
     json['country_code'],
     json['country'],
-    BoundingBox.fromJson(json['bounding_box']),
+    //BoundingBox.fromJson(json['bounding_box']),
   );
 }
