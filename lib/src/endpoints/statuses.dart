@@ -31,7 +31,15 @@ class Statuses {
     bool? excludeReplies,
 
     /// The entities node will not be included when set to false.
-    bool? includeEntities
+    bool? includeEntities,
+
+    // Undocumented parameters
+    bool? includeMyReweet,
+    bool? includeUserEntities,
+    String? tweetMode,
+    bool? includeExtAltText,
+    bool? includeReplyCount,
+    bool? includeExtMediaColor,
   }) async {
     Map<String, String> params = twitter.createParams({
       'count': count,
@@ -40,10 +48,18 @@ class Statuses {
       'trim_user': trimUser,
       'exclude_replies': excludeReplies,
       'include_entities': includeEntities,
+
+      'include_my_reweet': includeMyReweet,
+      'include_user_entities': includeUserEntities,
+      'tweet_mode': tweetMode,
+      'include_ext_alt_text': includeExtAltText,
+      'include_reply_count': includeReplyCount,
+      'include_ext_media_color': includeExtMediaColor,
     });
 
     Response response = await twitter.get("/1.1/statuses/home_timeline.json", params: params);
     if (response.statusCode != 200) {
+      print(response.body);
       throw "error fetching home timeline";
     }
 
