@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:twitter_client/src/api.dart';
+import 'package:twitter_client/src/objects/user.dart';
 
 class Users {
   final TwitterAPI twitter;
@@ -68,7 +71,7 @@ class Users {
   /// The author's most recent Tweet will be returned inline when possible.
   /// 
   /// https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/follow-search-get-users/api-reference/get-users-show
-  Future<void> show({
+  Future<User> show({
     /// The ID of the user for whom to return results.
     int? userID,
 
@@ -82,13 +85,22 @@ class Users {
       throw "Either userID or screenName should be defined for this request.";
     }
 
+    if (userID != null && screenName != null) {
+      throw "Both userID or screenName can't be defined for this request.";
+    }
+
     Map<String, String> params = twitter.createParams({
       'user_id': userID,
-      'screenName': screenName,
+      'screen_name': screenName,
       'include_entities': includeEntities,
     });
 
     Response response = await twitter.get("/1.1/users/show.json", params: params);
+    if (response.statusCode != 200) {
+      throw "error showing user";
+    }
+
+    return User.fromJson(jsonDecode(response.body));
   }
 
   /// Report the specified user as a spam account to Twitter.
