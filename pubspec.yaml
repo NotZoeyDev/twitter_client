@@ -1,6 +1,6 @@
 name: twitter_client
 description: A twitter API wrapper for Dart.
-version: 1.0.0
+version: 1.0.1
 publish_to: none
 homepage:
 
@@ -8,12 +8,8 @@ environment:
   sdk: '>=2.14.0 <3.0.0'
 
 dependencies:
-  flutter:
-    sdk: flutter
-
   crypto: ^3.0.1
   http: ^0.13.4
 
-flutter:
 dev_dependencies: 
   test: ^1.19.3
