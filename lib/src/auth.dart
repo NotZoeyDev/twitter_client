@@ -98,7 +98,7 @@ class OAuthHelper {
         output.add(0x25);
 
         /// Add the character as hexa
-        final hex = byte.toRadixString(16);
+        final hex = byte.toRadixString(16).padLeft(2, '0');
         output.addAll([
           ...utf8.encode(hex[0].toUpperCase()),
           ...utf8.encode(hex[1].toUpperCase()),
